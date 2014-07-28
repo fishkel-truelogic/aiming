@@ -4,8 +4,7 @@ import com.truelogic.aiming.ui.Board;
 import com.truelogic.aiming.ui.pixel.Pixel;
 
 public class Ball extends Pixel {
-	
-	private static final int RESISTENCE_FORCE = 3;
+
 	private double x0 = 200;
 	private double y0 = Board.M_HEIGHT * 10 - 30;
 	private int vx0;
@@ -18,18 +17,19 @@ public class Ball extends Pixel {
 			g = 10;
 		}
 		x = (int) (x0 + vx0 * time);
-		y = (int) (y0 + vy0 * time + g / 2 * Math.pow(time, 2)); 
+		y = (int) (y0 + vy0 * time + g / 2 * Math.pow(time, 2));
 		if (crashFloor()) {
 			Board.getInstance().setTime(0);
 			x0 = x;
 			y0 = y;
-			vy0 = (int) - ((vy0 + g * time) * 0.7);	
+			vy0 = (int) -((vy0 + g * time) * 0.7);
 			vx0 = (int) (vx0 * 0.7);
 		}
 	}
 
 	private boolean crashFloor() {
-		// TODO cambiar este method cuando cambie el fondo y el movimiento de la camara
+		// TODO cambiar este method cuando cambie el fondo y el movimiento de la
+		// camara
 		return y + 11 == Board.M_HEIGHT * 10;
 	}
 
@@ -50,12 +50,15 @@ public class Ball extends Pixel {
 	}
 
 	public boolean isBeingDragged() {
-		return this.beingDragged ;
+		return this.beingDragged;
 	}
-	
+
 	public void setBeingDragged(boolean beingDragged) {
 		this.beingDragged = beingDragged;
 	}
 
-	
+	public boolean isMoving() {
+		return vx0 != 0 && vy0 != 0;
+	}
+
 }

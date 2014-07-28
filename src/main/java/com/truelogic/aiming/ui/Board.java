@@ -4,9 +4,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -14,10 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
-import java.net.URL;
 
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -42,8 +36,6 @@ public class Board extends JPanel implements ActionListener {
 	private static final int MARGIN_LEFT = 0;
 
 	private static final int MARGIN_TOP = 0;
-	
-	private static final String DRAGGING_CURSOR = "/META-INF/draggingCursor.png";
 
 	private static Board instance;
 
@@ -53,7 +45,6 @@ public class Board extends JPanel implements ActionListener {
 	
 	private Ball ball;
 
-	private int lives;
 	
 	private int points;
 	
@@ -89,7 +80,7 @@ public class Board extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		time = time + 0.01;
+		time = time + 0.025;
 		ball.move(time, gravity);
 		repaint();
 	}
@@ -152,7 +143,7 @@ public class Board extends JPanel implements ActionListener {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (isDraggingZone(e.getX(), e.getY())) {
+			if (!ball.isMoving() && isDraggingZone(e.getX(), e.getY())) {
 				System.out.println("mouse pressed");
 				System.out.println("x = " + e.getX());
 				System.out.println("y = " + e.getY());
@@ -192,7 +183,11 @@ public class Board extends JPanel implements ActionListener {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-		
+			if (isDraggingZone(e.getX(), e.getY()) && !ball.isMoving()) {
+				setCursor (Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+			} else {
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
 		}
 
 	}
@@ -210,7 +205,7 @@ public class Board extends JPanel implements ActionListener {
 	}
 
 	public boolean isDraggingZone(int x, int y){
-		return ( ball.getVx0()==0 && ball.getVy0()==0 && Math.abs((x - ball.getX())) < 10 && Math.abs((y - ball.getY())) < 10);
+		return Math.abs((x - ball.getX())) < 10 && Math.abs((y - ball.getY())) < 10;
 	}
 	
 	public void setPoints(int points) {
