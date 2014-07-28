@@ -1,8 +1,12 @@
 package com.truelogic.aiming.ui;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -10,7 +14,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -35,6 +42,8 @@ public class Board extends JPanel implements ActionListener {
 	private static final int MARGIN_LEFT = 0;
 
 	private static final int MARGIN_TOP = 0;
+	
+	private static final String DRAGGING_CURSOR = "/META-INF/draggingCursor.png";
 
 	private static Board instance;
 
@@ -135,32 +144,41 @@ public class Board extends JPanel implements ActionListener {
 
 		@Override
 		public void mouseEntered(MouseEvent e) {
-
 		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			System.out.println("mouse pressed");
-			System.out.println("x = " + e.getX());
-			System.out.println("y = " + e.getY());
-			x0 = e.getX();
-			y0 = e.getY();
+			if (isDraggingZone(e.getX(), e.getY())) {
+				System.out.println("mouse pressed");
+				System.out.println("x = " + e.getX());
+				System.out.println("y = " + e.getY());
+				x0 = e.getX();
+				y0 = e.getY();
+				
+				ball.setBeingDragged(Boolean.TRUE);
+				
+				setCursor (Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			System.out.println("mouse released");
-			System.out.println("x = " + e.getX());
-			System.out.println("y = " + e.getY());
-			Board.getInstance().setDifX((int) (-(e.getX() - x0)));
-			Board.getInstance().setDifY((int) (-(e.getY() - y0)));
-			Board.getInstance().setGravity(true);
-			Board.getInstance().releaseBall();
+			if(ball.isBeingDragged()){
+				System.out.println("mouse released");
+				System.out.println("x = " + e.getX());
+				System.out.println("y = " + e.getY());
+				Board.getInstance().setDifX((int) (-(e.getX() - x0)));
+				Board.getInstance().setDifY((int) (-(e.getY() - y0)));
+				Board.getInstance().setGravity(true);
+				Board.getInstance().releaseBall();
+				
+				ball.setBeingDragged(Boolean.FALSE);
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
 		}
 
 	}
@@ -191,6 +209,10 @@ public class Board extends JPanel implements ActionListener {
 		System.out.println("dif y: " + difY);
 	}
 
+	public boolean isDraggingZone(int x, int y){
+		return ( ball.getVx0()==0 && ball.getVy0()==0 && Math.abs((x - ball.getX())) < 10 && Math.abs((y - ball.getY())) < 10);
+	}
+	
 	public void setPoints(int points) {
 		this.points = points;
 	}
