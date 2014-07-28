@@ -75,14 +75,14 @@ public class Board extends JPanel implements ActionListener {
 
 
 	private void paintBackground(Graphics g) {
-		g.drawImage(background.getImage(), -20, -20, this);
+		g.drawImage(background.getImage(), (int) background.getX(), (int) background.getY(), this);
 
 	}
 
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		time = time + 0.025;
+		time = time + 0.015;
 		ball.move(time, gravity);
 		repaint();
 	}
@@ -90,7 +90,7 @@ public class Board extends JPanel implements ActionListener {
 	public Board() {
 		super();
 		this.ball = new Ball();
-		this.background = new Background();
+		this.background = new Background(0, -1200);
 		setBackground(Color.BLACK);
 		timer = new Timer(DELAY, this);
 		timer.start();
@@ -259,6 +259,10 @@ public class Board extends JPanel implements ActionListener {
 
 	public void setTime(double time) {
 		this.time = time;
+	}
+
+	public Background getBg() {
+		return this.background;
 	}
 	
 	
