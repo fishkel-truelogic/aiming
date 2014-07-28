@@ -10,7 +10,8 @@ public class Ball extends Pixel {
 	private double y0 = Board.M_HEIGHT * 10 - 30;
 	private int vx0;
 	private int vy0;
-	
+	private boolean beingDragged = false;
+
 	public void move(double time, boolean gravity) {
 		int g = 0;
 		if (gravity) {
@@ -47,9 +48,14 @@ public class Ball extends Pixel {
 	public void setVy0(int vy0) {
 		this.vy0 = vy0;
 	}
-	
-	
-	
-	
 
+	public boolean isBeingDragged() {
+		return this.beingDragged ;
+	}
+	
+	public void setBeingDragged(boolean beingDragged) {
+		this.beingDragged = beingDragged;
+	}
+
+	
 }
