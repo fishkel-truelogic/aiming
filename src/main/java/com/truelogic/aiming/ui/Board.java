@@ -22,7 +22,7 @@ public class Board extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 592910003380869323L;
 
-	private static final int DELAY = 50;
+	private static final int DELAY = 1;
 
 	public static final int M_WIDTH = 96;
 
@@ -80,7 +80,7 @@ public class Board extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		time = time + 0.1;
+		time = time + 0.01;
 		ball.move(time, gravity);
 		repaint();
 	}
@@ -233,12 +233,14 @@ public class Board extends JPanel implements ActionListener {
 	public void setDifY(int difY) {
 		this.difY = difY;
 	}
-	
-	
-	
-	
-	
-	
-	
 
+	public double getTime() {
+		return time;
+	}
+
+	public void setTime(double time) {
+		this.time = time;
+	}
+	
+	
 }
