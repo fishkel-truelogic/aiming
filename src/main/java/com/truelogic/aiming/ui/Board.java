@@ -25,6 +25,8 @@ public class Board extends JPanel implements ActionListener {
 
 	private static final int DELAY = 1;
 
+	public static final int Floor = 548;
+	
 	public static final int M_WIDTH = 96;
 
 	public static final int M_HEIGHT = 60;

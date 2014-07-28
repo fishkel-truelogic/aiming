@@ -30,7 +30,7 @@ public class Ball extends Pixel {
 	private boolean crashFloor() {
 		// TODO cambiar este method cuando cambie el fondo y el movimiento de la
 		// camara
-		return y + 11 == Board.M_HEIGHT * 10;
+		return y + 11 == Board.Floor;
 	}
 
 	public int getVx0() {
