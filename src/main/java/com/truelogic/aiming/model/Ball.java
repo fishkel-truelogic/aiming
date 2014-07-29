@@ -13,7 +13,6 @@ public class Ball extends Pixel {
 	private boolean beingDragged = false;
 	private boolean backgroundMoveX = false;
 	private boolean backgroundMoveY = false;
-	private double backgroundTime = 0;
 
 	public void move(double time, boolean gravity) {
 		int g = 0;
@@ -22,8 +21,7 @@ public class Ball extends Pixel {
 			g = 10;
 		}
 		if (backgroundMoveX) {
-			bg.setX((int) (bg.getX0()  - vx0 * time));
-			backgroundTime += 0.015;
+			bg.setX((int) (bg.getX0() - (x0 + vx0 * time - 900)));
 			if (bg.getX() >= 1866) {
 				backgroundMoveX = Boolean.FALSE;
 			}
@@ -35,7 +33,7 @@ public class Ball extends Pixel {
 		}
 		
 		if (backgroundMoveY) {
-			bg.setY((int) (bg.getY() + (y - (y0 + vy0 * time + g / 2 * Math.pow(time, 2)))));
+			bg.setY((int) (bg.getY0() - ((y0 + vy0 * time + g / 2 * Math.pow(time, 2) - 50))));
 			if (bg.getY() <= -1200) {
 				backgroundMoveY = Boolean.FALSE;
 			}
@@ -49,7 +47,7 @@ public class Ball extends Pixel {
 		if (crashFloor()) {
 			Board.getInstance().setTime(0);
 			if (backgroundMoveX) {
-				bg.setX0((int) bg.getX());
+				x0 = - bg.getX() + 900;
 			} else {
 				x0 = x;
 			}
