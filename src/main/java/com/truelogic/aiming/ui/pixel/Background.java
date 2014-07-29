@@ -5,7 +5,6 @@ public class Background extends Pixel {
 
 	private int x0;
 	private int y0;
-	private int vy0;
 	
 	public Background(int i, int j) {
 		x = i;
@@ -29,16 +28,5 @@ public class Background extends Pixel {
 	public void setY0(int y0) {
 		this.y0 = y0;
 	}
-
-	public int getVy0() {
-		return vy0;
-	}
-
-	public void setVy0(int vy0) {
-		this.vy0 = vy0;
-	}
-	
-	
-	
 
 }
