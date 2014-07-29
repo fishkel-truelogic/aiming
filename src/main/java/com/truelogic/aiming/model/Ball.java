@@ -6,65 +6,86 @@ import com.truelogic.aiming.ui.pixel.Pixel;
 
 public class Ball extends Pixel {
 
+	private static final int IMAGE_SIZE = 11;
+	private static final int RIGHT_LIMIT = 900;
+	private static final int TOP_LIMIT = 50;
+	private static final int LEFT_LIMIT = 60;
+
 	private double x0 = 200;
-	private double y0 = Board.Floor - 10;
+	private double y0 = Background.FLOOR - 10;
+
 	private int vx0;
 	private int vy0;
-	private boolean beingDragged = false;
-	private boolean backgroundMoveX = false;
-	private boolean backgroundMoveY = false;
 
-	public void move(double time, boolean gravity) {
-		int g = 0;
-		Background bg = Board.getInstance().getBg();
-		if (gravity) {
-			g = 10;
-		}
+	private double time;
+
+	private boolean beingDragged;
+	private boolean backgroundMoveX;
+	private boolean backgroundMoveY;
+
+	public void move(Background bg) {
+		time += 0.015;
+		
+		int nextX = positionX(time);
+		int nextY = positionY(time);
+
+		checkBackgroundMove(nextX, nextY, bg);
+		
 		if (backgroundMoveX) {
-			bg.setX((int) (bg.getX0() - (x0 + vx0 * time - 900)));
-			if (bg.getX() >= 1866) {
-				backgroundMoveX = Boolean.FALSE;
-			}
+			bg.setX((int) (bg.getX0() - nextX + RIGHT_LIMIT));
 		} else {
-			x = (int) (x0 + vx0 * time);
-			if (x >= 900) {
-				backgroundMoveX = Boolean.TRUE;
-			}
+			x = nextX;
 		}
-		
+
 		if (backgroundMoveY) {
-			bg.setY((int) (bg.getY0() - ((y0 + vy0 * time + g / 2 * Math.pow(time, 2) - 50))));
-			if (bg.getY() <= -1200) {
-				backgroundMoveY = Boolean.FALSE;
-			}
+			bg.setY((int) (bg.getY0() - nextY + TOP_LIMIT));
 		} else {
-			y = (int) (y0 + vy0 * time + g / 2 * Math.pow(time, 2));
-			if (y <= 50) {
-				backgroundMoveY = Boolean.TRUE;
-			}
+			y = nextY;
 		}
 		
-		if (crashFloor()) {
-			Board.getInstance().setTime(0);
-			if (backgroundMoveX) {
-				x0 = - bg.getX() + 900;
-			} else {
-				x0 = x;
-			}
-			vx0 = (int) (vx0 * 0.7);
-			y0 = y;
-			vy0 = (int) -((vy0 + g * time) * 0.7);
-		}
+		bounceFloor(bg);
+
+	}
+
+	private void checkBackgroundMove(int nextX, int nextY, Background bg) {
+		backgroundMoveX = (nextX > RIGHT_LIMIT && nextX > x && bg.getX() >= - 1820) || (nextX < LEFT_LIMIT && nextX < x && bg.getX() <= Background.MAIN_X_POSITION);
+		backgroundMoveY = (nextY <= TOP_LIMIT && nextY < y && bg.getY() >= Background.MAIN_Y_POSITION) || (nextY <= TOP_LIMIT && nextY > y && bg.getY() < Background.MAIN_Y_POSITION) ;
 		
 	}
 
+	private void bounceFloor(Background bg) {
+		if (crashFloor()) {
+			time = 0;
+			x0 = backgroundMoveX ? -bg.getX() + RIGHT_LIMIT : x;
+			y0 = y;
+			vx0 = (int) (vx0 * 0.9);
+			vy0 = (int) -((vy0 + Board.GRAVITY * time) * 0.9);
+		}
+	}
+
+	private int positionX(double time) {
+		return (int) (x0 + vx0 * time);
+	}
+
+	private int positionY(double time) {
+		return (int) (y0 + vy0 * time + Board.GRAVITY / 2 * Math.pow(time, 2));
+	}
+
 	private boolean crashFloor() {
-		for (int i = 11; i >= 0; i --) {
-			if (y + i == Board.Floor) {
+		for (int i = IMAGE_SIZE; i >= 0; i--) {
+			if (y + i == Background.FLOOR) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public boolean isMoving() {
+		return vx0 != 0 || vy0 != 0;
+	}
+
+	public boolean isDraggingZone(int x, int y) {
+		return Math.abs((x - this.x - 5)) < 10 && Math.abs((y - this.y - 10)) < 10;
 	}
 
 	public int getVx0() {
@@ -91,8 +112,8 @@ public class Ball extends Pixel {
 		this.beingDragged = beingDragged;
 	}
 
-	public boolean isMoving() {
-		return vx0 != 0 && vy0 != 0;
+	public void setTime(double time) {
+		this.time = time;
 	}
 
 }

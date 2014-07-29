@@ -14,7 +14,7 @@ public class App extends JFrame {
 	private static final long serialVersionUID = 8850137530866277211L;
 
 	public App() {
-		add(Board.getInstance());
+		add(new Board());
 		setTitle("Aiming");
 		pack();
 		setResizable(false);

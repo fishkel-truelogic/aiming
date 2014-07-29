@@ -24,86 +24,44 @@ public class Board extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 592910003380869323L;
 
 	private static final int DELAY = 1;
+	private static final int BOARD_WIDTH = 960;
+	private static final int BOARD_HEIGHT = 600;
 
-	public static final int Floor = 548;
-	
-	public static final int M_WIDTH = 96;
+	public static final int GRAVITY = 10;
 
-	public static final int M_HEIGHT = 60;
-
-	private static final int B_WIDTH = M_WIDTH * 10;
-
-	private static final int B_HEIGHT = M_HEIGHT * 10;
-
-	private static final int MARGIN_LEFT = 0;
-
-	private static final int MARGIN_TOP = 0;
-
-	private static Board instance;
+	private static int margin_left = 0;
+	private static int margin_top = 0;
 
 	private Timer timer;
-
 	private Background background;
-	
 	private Ball ball;
-
-	
-	private int points;
-	
-	private double time;
-
-	private boolean gravity;
-	
-	private int difX;
-	private int difY;
-
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		paintBackground(g);
-		paintBall(g);
-
+		paintPixel(background, g);
+		paintPixel(ball, g);
 	}
-
-	private void paintBall(Graphics g) {
-		int x = (int) (MARGIN_LEFT + ball.getX() * Pixel.SIZE);
-		int y = (int) (MARGIN_TOP + ball.getY() * Pixel.SIZE);
-		g.drawImage(ball.getImage(), x, y, this);
-		
-	}
-
-
-	private void paintBackground(Graphics g) {
-		g.drawImage(background.getImage(), (int) background.getX(), (int) background.getY(), this);
-
-	}
-
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		time = time + 0.015;
-		ball.move(time, gravity);
+		ball.move(background);
 		repaint();
 	}
 
 	public Board() {
 		super();
-		this.ball = new Ball();
-		this.background = new Background(0, -1200);
+		fixMargin();
 		setBackground(Color.BLACK);
-		timer = new Timer(DELAY, this);
-		timer.start();
-		setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
+		setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
 		setFocusable(true);
 		addMouseMotionListener(new MouseArkanoidListener());
 		addMouseListener(new MouseArkanoidListe());
 		addKeyListener(new KeyPressListener());
+		init();
 	}
 
-
 	private class KeyPressListener extends KeyAdapter {
-
 
 		@Override
 		public void keyReleased(KeyEvent e) {
@@ -132,7 +90,6 @@ public class Board extends JPanel implements ActionListener {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-
 		}
 
 		@Override
@@ -145,30 +102,20 @@ public class Board extends JPanel implements ActionListener {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (!ball.isMoving() && isDraggingZone(e.getX(), e.getY())) {
-				System.out.println("mouse pressed");
-				System.out.println("x = " + e.getX());
-				System.out.println("y = " + e.getY());
+			if (!ball.isMoving() && ball.isDraggingZone(e.getX(), e.getY())) {
 				x0 = e.getX();
 				y0 = e.getY();
-				
 				ball.setBeingDragged(Boolean.TRUE);
-				
-				setCursor (Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+				setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if(ball.isBeingDragged()){
-				System.out.println("mouse released");
-				System.out.println("x = " + e.getX());
-				System.out.println("y = " + e.getY());
-				Board.getInstance().setDifX((int) (-(e.getX() - x0)));
-				Board.getInstance().setDifY((int) (-(e.getY() - y0)));
-				Board.getInstance().setGravity(true);
-				Board.getInstance().releaseBall();
-				
+			if (ball.isBeingDragged()) {
+				ball.setVx0((int) (-(e.getX() - x0)));
+				ball.setVy0((int) (-(e.getY() - y0)));
+				ball.setTime(0);
 				ball.setBeingDragged(Boolean.FALSE);
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
@@ -178,15 +125,14 @@ public class Board extends JPanel implements ActionListener {
 
 	private class MouseArkanoidListener implements MouseMotionListener {
 
-		
 		@Override
 		public void mouseDragged(MouseEvent e) {
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			if (isDraggingZone(e.getX(), e.getY()) && !ball.isMoving()) {
-				setCursor (Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+			if (ball.isDraggingZone(e.getX(), e.getY()) && !ball.isMoving()) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 			} else {
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
@@ -194,31 +140,24 @@ public class Board extends JPanel implements ActionListener {
 
 	}
 
-	public int getPoints() {
-		return points;
+	private void paintPixel(Pixel pixel, Graphics g) {
+		int x = (int) (margin_left + pixel.getX());
+		int y = (int) (margin_top + pixel.getY());
+		g.drawImage(pixel.getImage(), x, y, this);
 	}
 
-	public void releaseBall() {
-		ball.setVx0(difX);
-		ball.setVy0(difY);
-		time = 0;
-		System.out.println("dif x: " + difX);
-		System.out.println("dif y: " + difY);
+	private void init() {
+		this.ball = new Ball();
+		this.background = new Background();
+		timer = new Timer(DELAY, this);
+		timer.start();
 	}
 
-	public boolean isDraggingZone(int x, int y){
-		return Math.abs((x - ball.getX())) < 10 && Math.abs((y - ball.getY())) < 10;
-	}
-	
-	public void setPoints(int points) {
-		this.points = points;
-	}
-	
-	public static Board getInstance() {
-		if (instance == null) {
-			instance = new Board();
+	private void fixMargin() {
+		String os = System.getProperty("os.name").toLowerCase();
+		if (os.indexOf("win") >= 0) {
+			margin_top = 10;
 		}
-		return instance;
 	}
 
 	public Ball getBall() {
@@ -229,41 +168,8 @@ public class Board extends JPanel implements ActionListener {
 		this.ball = ball;
 	}
 
-	public boolean isGravity() {
-		return gravity;
-	}
-
-	public void setGravity(boolean gravity) {
-		this.gravity = gravity;
-	}
-
-	public int getDifX() {
-		return difX;
-	}
-
-	public void setDifX(int difX) {
-		this.difX = difX;
-	}
-
-	public int getDifY() {
-		return difY;
-	}
-
-	public void setDifY(int difY) {
-		this.difY = difY;
-	}
-
-	public double getTime() {
-		return time;
-	}
-
-	public void setTime(double time) {
-		this.time = time;
-	}
-
 	public Background getBg() {
 		return this.background;
 	}
-	
-	
+
 }
