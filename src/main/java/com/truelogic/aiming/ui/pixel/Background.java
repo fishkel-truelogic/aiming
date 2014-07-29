@@ -5,6 +5,7 @@ public class Background extends Pixel {
 	public static final int FLOOR = 548;
 	public static final int MAIN_Y_POSITION = -1200;
 	public static final int MAIN_X_POSITION = 0;
+	public static final int IMG_WIDTH = 8000;
 
 	private int x0;
 	private int y0;

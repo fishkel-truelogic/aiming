@@ -24,9 +24,9 @@ public class Board extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 592910003380869323L;
 
 	private static final int DELAY = 1;
-	private static final int BOARD_WIDTH = 960;
 	private static final int BOARD_HEIGHT = 600;
 
+	public static final int BOARD_WIDTH = 960;
 	public static final int GRAVITY = 10;
 
 	private static int margin_left = 0;

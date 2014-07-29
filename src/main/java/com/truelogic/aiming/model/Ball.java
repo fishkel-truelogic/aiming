@@ -60,7 +60,7 @@ public class Ball extends Pixel {
 	private void checkBackgroundMove(int nextX, int nextY, Background bg) {
 		
 		backgroundMoveLeftX = (x < LEFT_LIMIT && vx0 < 0 && bg.getX() <= Background.MAIN_X_POSITION);
-		backgroundMoveRightX = (x > RIGHT_LIMIT && vx0 > 0 && bg.getX() >= -1820);
+		backgroundMoveRightX = (x > RIGHT_LIMIT && vx0 > 0 && bg.getX() >= Background.IMG_WIDTH - Board.BOARD_WIDTH);
 		backgroundMoveY = (nextY <= TOP_LIMIT && nextY < y && bg.getY() >= Background.MAIN_Y_POSITION) || (nextY <= TOP_LIMIT && nextY > y && bg.getY() < Background.MAIN_Y_POSITION) ;
 		
 	}
