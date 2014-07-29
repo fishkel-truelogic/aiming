@@ -17,6 +17,9 @@ public class Ball extends Pixel {
 	private int vx0;
 	private int vy0;
 
+	private int absX;
+	private int absY;
+
 	private double time;
 
 	private boolean beingDragged;
@@ -24,53 +27,53 @@ public class Ball extends Pixel {
 	private boolean backgroundMoveLeftX;
 	private boolean backgroundMoveY;
 
-	public Ball() {
+	private Background background;
+
+	public Ball(Background background) {
 		x = x0;
 		y = y0;
+		this.background = background;
 	}
-	
-	public void move(Background bg) {
-		time += 0.015;
-		
-		int absX = positionX(time);
-		int absY = positionY(time);
 
-		checkBackgroundMove(absX, absY, bg);
+	public void move(Background bg) {
 		
+		absoluteMove();
+		relativeMove();
+
+		if (crashFloor()) {
+			bounceVertically();
+		}
+
+		if (crashWall()) {
+			bounceHorizontally();
+		}
+
+	}
+
+	private void absoluteMove() {
+		time += 0.015;
+		absX = positionX(time);
+		absY = positionY(time);
+	}
+
+	private void relativeMove() {
+		
+		checkBackgroundMove();
+
 		if (backgroundMoveRightX) {
-			bg.setX((int) (bg.getX0() - absX + RIGHT_LIMIT));
+			background.setX((int) (background.getX0() - absX + RIGHT_LIMIT));
 		} else if (backgroundMoveLeftX) {
-			bg.setX((int) (bg.getX0() - absX + LEFT_LIMIT));
+			background.setX((int) (background.getX0() - absX + LEFT_LIMIT));
 		} else {
-			x = absX + bg.getX();
+			x = absX + background.getX();
 		}
 
 		if (backgroundMoveY) {
-			bg.setY((int) (bg.getY0() - absY + TOP_LIMIT));
+			background.setY((int) (background.getY0() - absY + TOP_LIMIT));
 		} else {
 			y = absY;
 		}
-		
-		if (crashFloor()) {
-			bounceFloor(bg, absX, absY);
-		}
 
-	}
-
-	private void checkBackgroundMove(int nextX, int nextY, Background bg) {
-		
-		backgroundMoveLeftX = (x < LEFT_LIMIT && vx0 < 0 && bg.getX() <= Background.MAIN_X_POSITION);
-		backgroundMoveRightX = (x > RIGHT_LIMIT && vx0 > 0 && bg.getX() >= Background.IMG_WIDTH - Board.BOARD_WIDTH);
-		backgroundMoveY = (nextY <= TOP_LIMIT && nextY < y && bg.getY() >= Background.MAIN_Y_POSITION) || (nextY <= TOP_LIMIT && nextY > y && bg.getY() < Background.MAIN_Y_POSITION) ;
-		
-	}
-
-	private void bounceFloor(Background bg, int absX, int absY) {
-		time = 0;
-		x0 = absX;
-		y0 = y;
-		vx0 = (int) (vx0 * 0.9);
-		vy0 = (int) -((vy0 + Board.GRAVITY * time) * 0.9);
 	}
 
 	private int positionX(double time) {
@@ -79,6 +82,46 @@ public class Ball extends Pixel {
 
 	private int positionY(double time) {
 		return (int) (y0 + vy0 * time + Board.GRAVITY / 2 * Math.pow(time, 2));
+	}
+
+	private void checkBackgroundMove() {
+
+		backgroundMoveLeftX = (x < LEFT_LIMIT && vx0 < 0 && background.getX() <= Background.MAIN_X_POSITION);
+		backgroundMoveRightX = (x > RIGHT_LIMIT && vx0 > 0 && background.getX() >= Board.BOARD_WIDTH
+				- Background.IMG_WIDTH);
+		backgroundMoveY = (absY <= TOP_LIMIT && absY < y && background.getY() >= Background.MAIN_Y_POSITION)
+				|| (absY <= TOP_LIMIT && absY > y && background.getY() < Background.MAIN_Y_POSITION);
+
+	}
+	
+	private void bounceHorizontally() {
+		vx0 = (int) (-vx0 * 0.6);
+		x0 = absX;
+		y0 = absY;
+		vy0 = (int) ((vy0 + Board.GRAVITY * time) * 0.7);
+		time = 0;
+	}
+
+	private void bounceVertically() {
+		x0 = absX;
+		y0 = absY;
+		vx0 = (int) (vx0 * 0.9);
+		vy0 = (int) -((vy0 + Board.GRAVITY * time) * 0.7);
+		time = 0;
+	}
+	
+	private boolean crashWall() {
+
+		for (int i = IMAGE_SIZE; i >= 0; i--) {
+			if (absX + i == Background.IMG_WIDTH) {
+				return true;
+			}
+			if (absX - i == 0) {
+				absX += 1;
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean crashFloor() {
@@ -95,7 +138,8 @@ public class Ball extends Pixel {
 	}
 
 	public boolean isDraggingZone(int x, int y) {
-		return Math.abs((x - this.x - 5)) < 10 && Math.abs((y - this.y - 10)) < 10;
+		return Math.abs((x - this.x - 5)) < 10
+				&& Math.abs((y - this.y - 10)) < 10;
 	}
 
 	public int getVx0() {
@@ -125,5 +169,5 @@ public class Ball extends Pixel {
 	public void setTime(double time) {
 		this.time = time;
 	}
-
+	
 }

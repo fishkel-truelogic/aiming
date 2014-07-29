@@ -147,8 +147,8 @@ public class Board extends JPanel implements ActionListener {
 	}
 
 	private void init() {
-		this.ball = new Ball();
 		this.background = new Background();
+		this.ball = new Ball(background);
 		timer = new Timer(DELAY, this);
 		timer.start();
 	}
