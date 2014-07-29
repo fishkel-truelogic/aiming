@@ -20,47 +20,57 @@ public class Ball extends Pixel {
 	private double time;
 
 	private boolean beingDragged;
-	private boolean backgroundMoveX;
+	private boolean backgroundMoveRightX;
+	private boolean backgroundMoveLeftX;
 	private boolean backgroundMoveY;
 
+	public Ball() {
+		x = x0;
+		y = y0;
+	}
+	
 	public void move(Background bg) {
 		time += 0.015;
 		
-		int nextX = positionX(time);
-		int nextY = positionY(time);
+		int absX = positionX(time);
+		int absY = positionY(time);
 
-		checkBackgroundMove(nextX, nextY, bg);
+		checkBackgroundMove(absX, absY, bg);
 		
-		if (backgroundMoveX) {
-			bg.setX((int) (bg.getX0() - nextX + RIGHT_LIMIT));
+		if (backgroundMoveRightX) {
+			bg.setX((int) (bg.getX0() - absX + RIGHT_LIMIT));
+		} else if (backgroundMoveLeftX) {
+			bg.setX((int) (bg.getX0() - absX + LEFT_LIMIT));
 		} else {
-			x = nextX;
+			x = absX + bg.getX();
 		}
 
 		if (backgroundMoveY) {
-			bg.setY((int) (bg.getY0() - nextY + TOP_LIMIT));
+			bg.setY((int) (bg.getY0() - absY + TOP_LIMIT));
 		} else {
-			y = nextY;
+			y = absY;
 		}
 		
-		bounceFloor(bg);
+		if (crashFloor()) {
+			bounceFloor(bg, absX, absY);
+		}
 
 	}
 
 	private void checkBackgroundMove(int nextX, int nextY, Background bg) {
-		backgroundMoveX = (nextX > RIGHT_LIMIT && nextX > x && bg.getX() >= - 1820) || (nextX < LEFT_LIMIT && nextX < x && bg.getX() <= Background.MAIN_X_POSITION);
+		
+		backgroundMoveLeftX = (x < LEFT_LIMIT && vx0 < 0 && bg.getX() <= Background.MAIN_X_POSITION);
+		backgroundMoveRightX = (x > RIGHT_LIMIT && vx0 > 0 && bg.getX() >= -1820);
 		backgroundMoveY = (nextY <= TOP_LIMIT && nextY < y && bg.getY() >= Background.MAIN_Y_POSITION) || (nextY <= TOP_LIMIT && nextY > y && bg.getY() < Background.MAIN_Y_POSITION) ;
 		
 	}
 
-	private void bounceFloor(Background bg) {
-		if (crashFloor()) {
-			time = 0;
-			x0 = backgroundMoveX ? -bg.getX() + RIGHT_LIMIT : x;
-			y0 = y;
-			vx0 = (int) (vx0 * 0.9);
-			vy0 = (int) -((vy0 + Board.GRAVITY * time) * 0.9);
-		}
+	private void bounceFloor(Background bg, int absX, int absY) {
+		time = 0;
+		x0 = absX;
+		y0 = y;
+		vx0 = (int) (vx0 * 0.9);
+		vy0 = (int) -((vy0 + Board.GRAVITY * time) * 0.9);
 	}
 
 	private int positionX(double time) {
