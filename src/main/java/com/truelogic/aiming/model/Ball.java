@@ -48,7 +48,7 @@ public class Ball extends Pixel {
 	}
 
 	private void checkBackgroundMove(int nextX, int nextY, Background bg) {
-		backgroundMoveX = (nextX > RIGHT_LIMIT && nextX > x && bg.getX() >= - 1820) || (nextX < LEFT_LIMIT && nextX < x && bg.getX() <= Background.MAIN_X_POSITION);
+		backgroundMoveX = (nextX > RIGHT_LIMIT && nextX > x && bg.getX() >= - 7000) || (nextX < LEFT_LIMIT && nextX < x && bg.getX() <= Background.MAIN_X_POSITION);
 		backgroundMoveY = (nextY <= TOP_LIMIT && nextY < y && bg.getY() >= Background.MAIN_Y_POSITION) || (nextY <= TOP_LIMIT && nextY > y && bg.getY() < Background.MAIN_Y_POSITION) ;
 		
 	}
