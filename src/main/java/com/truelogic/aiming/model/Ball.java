@@ -3,6 +3,7 @@ package com.truelogic.aiming.model;
 import com.truelogic.aiming.ui.Board;
 import com.truelogic.aiming.ui.pixel.Background;
 import com.truelogic.aiming.ui.pixel.Pixel;
+import com.truelogic.aiming.ui.pixel.Target;
 
 public class Ball extends Pixel {
 
@@ -41,7 +42,11 @@ public class Ball extends Pixel {
 		relativeMove();
 
 		if (crashFloor()) {
-			bounceVertically();
+			if (!reachTheTarget(background.getTarget())) {
+				bounceVertically();
+			} else {
+				stop();
+			}
 		}
 
 		if (crashWall()) {
@@ -112,6 +117,15 @@ public class Ball extends Pixel {
 		time = 0;
 	}
 	
+	private void stop() {
+		vx0 = 0;
+		x0 = absX;
+		y0 = absY;
+		vy0 = 0;
+		time = 0;
+		
+	}
+	
 	private boolean crashWall() {
 
 		for (int i = IMAGE_SIZE; i >= 0; i--) {
@@ -133,6 +147,10 @@ public class Ball extends Pixel {
 			}
 		}
 		return false;
+	}
+	
+	private boolean reachTheTarget(Target target) {
+		return absX >= target.getHoleLeftBorder() && absX + IMAGE_SIZE <= target.HoleRightBorder();
 	}
 
 	public boolean isMoving() {

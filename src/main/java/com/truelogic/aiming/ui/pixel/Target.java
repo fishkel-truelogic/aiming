@@ -6,7 +6,8 @@ import com.truelogic.aiming.ui.Board;
 
 public class Target extends Pixel {
 
-	private static final double IMG_HEIGHT = 157; 
+	private static final double IMG_HEIGHT = 157;
+	private static final double HOLE_SIZE = 35; 
 	private double absX;
 	private double absY;
 	
@@ -36,6 +37,16 @@ public class Target extends Pixel {
 	public void move(double x, double y) {
 		this.x = absX + x;
 		this.y = absY + Math.abs(Background.MAIN_Y_POSITION - y) - (Background.IMG_HEIGHT - Board.BOARD_HEIGHT);
+	}
+
+
+	public int getHoleLeftBorder() {
+		return (int) absX;
+	}
+
+
+	public int HoleRightBorder() {
+		return (int) (absX + HOLE_SIZE);
 	}
 
 }
