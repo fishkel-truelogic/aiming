@@ -6,7 +6,10 @@ public class Background extends Pixel {
 	public static final int MAIN_Y_POSITION = -1200;
 	public static final int MAIN_X_POSITION = 0;
 	public static final int IMG_WIDTH = 8000;
+	public static final int IMG_HEIGHT = 1800;
 
+	private Target target;
+	
 	private int x0;
 	private int y0;
 
@@ -33,4 +36,12 @@ public class Background extends Pixel {
 		this.y0 = y0;
 	}
 
+	public Target getTarget() {
+		return target;
+	}
+
+	public void setTarget(Target target) {
+		this.target = target;
+	}
+	
 }
