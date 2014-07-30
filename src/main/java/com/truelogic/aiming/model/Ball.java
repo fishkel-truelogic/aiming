@@ -51,7 +51,7 @@ public class Ball extends Pixel {
 	}
 
 	private void absoluteMove() {
-		time += 0.015;
+		time += 0.025;
 		absX = positionX(time);
 		absY = positionY(time);
 	}
@@ -106,7 +106,7 @@ public class Ball extends Pixel {
 		x0 = absX;
 		y0 = absY;
 		vx0 = (int) (vx0 * 0.9);
-		vy0 = (int) -((vy0 + Board.GRAVITY * time) * 0.7);
+		vy0 = (int) -((vy0 + Board.GRAVITY * time) * 0.8);
 		time = 0;
 	}
 	
