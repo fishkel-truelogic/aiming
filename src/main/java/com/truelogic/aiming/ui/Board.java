@@ -18,13 +18,14 @@ import javax.swing.Timer;
 import com.truelogic.aiming.model.Ball;
 import com.truelogic.aiming.ui.pixel.Background;
 import com.truelogic.aiming.ui.pixel.Pixel;
+import com.truelogic.aiming.ui.pixel.Target;
 
 public class Board extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 592910003380869323L;
 
 	private static final int DELAY = 1;
-	private static final int BOARD_HEIGHT = 600;
+	public static final int BOARD_HEIGHT = 600;
 
 	public static final int BOARD_WIDTH = 960;
 	public static final int GRAVITY = 10;
@@ -32,14 +33,17 @@ public class Board extends JPanel implements ActionListener {
 	private static int margin_left = 0;
 	private static int margin_top = 0;
 
-	private Timer timer;
 	private Background background;
 	private Ball ball;
+	private Target target;
+	private Timer timer;
+
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		paintPixel(background, g);
+		paintPixel(target, g);
 		paintPixel(ball, g);
 	}
 
@@ -73,8 +77,12 @@ public class Board extends JPanel implements ActionListener {
 
 			switch (e.getKeyCode()) {
 			case KeyEvent.VK_LEFT:
+				if (background.getX() < 0)
+					background.setX((int) (background.getX() + 100));
 				break;
 			case KeyEvent.VK_RIGHT:
+				if (background.getX() >= Board.BOARD_WIDTH - Background.IMG_WIDTH + 50)
+					background.setX((int) (background.getX() - 100));
 				break;
 			case KeyEvent.VK_SPACE:
 				break;
@@ -148,6 +156,8 @@ public class Board extends JPanel implements ActionListener {
 
 	private void init() {
 		this.background = new Background();
+		this.target = new Target();
+		background.setTarget(target);
 		this.ball = new Ball(background);
 		timer = new Timer(DELAY, this);
 		timer.start();

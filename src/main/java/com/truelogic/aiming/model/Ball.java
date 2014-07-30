@@ -12,7 +12,7 @@ public class Ball extends Pixel {
 	private static final int LEFT_LIMIT = 60;
 
 	private double x0 = 200;
-	private double y0 = Background.FLOOR - 10;
+	private double y0 = Background.FLOOR - 20;
 
 	private int vx0;
 	private int vy0;
@@ -73,6 +73,8 @@ public class Ball extends Pixel {
 		} else {
 			y = absY;
 		}
+		
+		background.getTarget().move(background.getX(), background.getY());
 
 	}
 
@@ -126,7 +128,7 @@ public class Ball extends Pixel {
 
 	private boolean crashFloor() {
 		for (int i = IMAGE_SIZE; i >= 0; i--) {
-			if (y + i == Background.FLOOR) {
+			if (y + i == Background.FLOOR + 10) {
 				return true;
 			}
 		}
