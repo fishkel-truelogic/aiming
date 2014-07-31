@@ -80,6 +80,7 @@ public class Ball extends Pixel {
 		}
 		
 		background.getTarget().move(background.getX(), background.getY());
+		background.getGolfer().move(background.getX(), background.getY());
 
 	}
 
@@ -176,6 +177,40 @@ public class Ball extends Pixel {
 
 	public void setVy0(int vy0) {
 		this.vy0 = vy0;
+	}
+	
+	public double getX0() {
+		return x0;
+	}
+
+	public void setX0(double x0) {
+		this.x0 = x0;
+	}
+
+	public double getY0() {
+		return y0;
+	}
+
+	public void setY0(double y0) {
+		this.y0 = y0;
+	}
+	
+	
+
+	public int getAbsX() {
+		return absX;
+	}
+
+	public void setAbsX(int absX) {
+		this.absX = absX;
+	}
+
+	public int getAbsY() {
+		return absY;
+	}
+
+	public void setAbsY(int absY) {
+		this.absY = absY;
 	}
 
 	public boolean isBeingDragged() {

@@ -9,6 +9,7 @@ public class Background extends Pixel {
 	public static final int IMG_HEIGHT = 1800;
 
 	private Target target;
+	private Golfer golfer;
 	
 	private int x0;
 	private int y0;
@@ -43,5 +44,15 @@ public class Background extends Pixel {
 	public void setTarget(Target target) {
 		this.target = target;
 	}
+
+	public Golfer getGolfer() {
+		return golfer;
+	}
+
+	public void setGolfer(Golfer golfer) {
+		this.golfer = golfer;
+	}
+	
+	
 	
 }

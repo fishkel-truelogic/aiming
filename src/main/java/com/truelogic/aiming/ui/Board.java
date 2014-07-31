@@ -17,6 +17,7 @@ import javax.swing.Timer;
 
 import com.truelogic.aiming.model.Ball;
 import com.truelogic.aiming.ui.pixel.Background;
+import com.truelogic.aiming.ui.pixel.Golfer;
 import com.truelogic.aiming.ui.pixel.Pixel;
 import com.truelogic.aiming.ui.pixel.Target;
 
@@ -37,6 +38,7 @@ public class Board extends JPanel implements ActionListener {
 	private Ball ball;
 	private Target target;
 	private Timer timer;
+	private Golfer golfer;
 
 
 	@Override
@@ -44,12 +46,36 @@ public class Board extends JPanel implements ActionListener {
 		super.paintComponent(g);
 		paintPixel(background, g);
 		paintPixel(target, g);
+		paintGolfer(g);
 		paintPixel(ball, g);
+	}
+
+	private void paintGolfer(Graphics g) {
+		if (ball.isBeingDragged()) {
+			golfer.setImage(golfer.getImage1());
+		} else if (!ball.isMoving() && !ball.isBeingDragged()) {
+			golfer.setImage(golfer.getImage2());
+		} else if (ball.isMoving() && golfer.getImage2().equals(golfer.getImage())){
+			golfer.setImage(golfer.getImage3());
+		} 
+		
+		if (ball.getY() < golfer.getY() + Golfer.IMG_HEIGHT / 2 && golfer.getImage3().equals(golfer.getImage())) {
+			golfer.setImage(golfer.getImage4());
+		}
+		
+		if (ball.getY() < golfer.getY() && golfer.getImage4().equals(golfer.getImage())) {
+			golfer.setImage(golfer.getImage5());
+		}
+		
+		paintPixel(golfer, g);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		ball.move(background);
+		if (!ball.isMoving()) {
+			golfer.setAbsX(ball.getX0() - Golfer.IMAGE_WIDTH / 2);
+		}
 		repaint();
 	}
 
@@ -125,6 +151,7 @@ public class Board extends JPanel implements ActionListener {
 				ball.setVy0((int) (-(e.getY() - y0)));
 				ball.setTime(0);
 				ball.setBeingDragged(Boolean.FALSE);
+				golfer.setImage(golfer.getImage2());
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		}
@@ -156,9 +183,12 @@ public class Board extends JPanel implements ActionListener {
 
 	private void init() {
 		this.background = new Background();
-		this.target = new Target();
-		background.setTarget(target);
 		this.ball = new Ball(background);
+		this.target = new Target();
+		this.golfer = new Golfer();
+		golfer.setAbsX(ball.getX0() - Golfer.IMAGE_WIDTH / 2);
+		background.setTarget(target);
+		background.setGolfer(golfer);
 		timer = new Timer(DELAY, this);
 		timer.start();
 	}
